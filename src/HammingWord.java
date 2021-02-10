@@ -3,6 +3,7 @@ import javax.management.BadStringOperationException;
 public class HammingWord {
 	
         private String msg;//message to be transmit
+        private int nbMsg; // numbre of bits in the message
         private int nbParityBits ; // number of number of parity bits needed
         private boolean isHamming ; //check if it's hamming code ;
         
@@ -12,12 +13,13 @@ public class HammingWord {
         	if(!message.matches("[01]+") || message.length()<1)throw new BadStringOperationException("the message is not binary");
 
         	msg = message;
+        	nbMsg= message.length();
         	nbParityBits=0;
         	isHamming = false;
         }
         
         //get number of number of parity bits needed
-        private int getNbParityBits() {
+       public int getNbParityBits() {
         	
             nbParityBits=0;
         	while(true)
@@ -31,7 +33,7 @@ public class HammingWord {
 			return nbParityBits;
         }
         //get number of bit in the message 
-        private int getnbMsg() {
+        public int getnbMsg() {
         	int m = msg.length();
         	return m;
         }
