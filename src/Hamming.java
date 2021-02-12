@@ -1,11 +1,25 @@
+
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.management.BadStringOperationException;
 
 public class Hamming {
      private static HammingWord code ;
-     private static int[] tab;
+     private static int[] array;
+     private boolean erreur=false;
      public Hamming(String msg) throws BadStringOperationException {
+    	
     	 code = new HammingWord(msg);
-    	 addParityBits(addMessage());
+    	// addParityBits(addMessage());
+    	 if(code.acceptMsg()) {
+    		 addParityBits(addMessage());
+    	 }else if(code.isHamming()) {
+    		 verifier();
+    	 }else {
+    	 System.out.println("the number of bits in the message is incorrect or its not a hamming code");
+    	 System.exit(1);
+     }
     	 
      }
      public static int[] addMessage()  {
@@ -14,9 +28,9 @@ public class Hamming {
     	 int j=code.getnbMsg()-1;
     	 int temp=0;
     	 //un tableau pour placer les bits de msg;
-    	tab = new int[code.getnbMsg()+ code.getNbParityBits() +1];//on commence par 1 vue n=2^i  i commence par 1
+    	array = new int[code.getnbMsg()+ code.getNbParityBitsNeeded() +1];//on commence par 1 vue n=2^i  i commence par 1
     	 
-    	 for(int i =1; i <=tab.length;i++) {
+    	 for(int i =1; i <=array.length;i++) {
  			
  			   //box of parity bits 
  		        boxParity =  (int) Math.pow(2, temp);
@@ -24,7 +38,7 @@ public class Hamming {
  			   //check if we are in boxParity
  			    if(i%boxParity != 0) {
  			     	
- 			    	tab[i]=Integer.parseInt(Character.toString(code.getMsg().charAt(j)));
+ 			    	array[i]=Integer.parseInt(Character.toString(code.getMsg().charAt(j)));
  	                j--;
  	                
  			   }else{
@@ -35,12 +49,12 @@ public class Hamming {
  			
  		 }
     	 
-    	 return tab;
+    	 return array;
      }
      //OU exclusif //Retourne 1 si l'un des deux bits de même poids est à 1 (mais pas les deux)
      public static  int[] addParityBits(int[] message) {
     	 
-    	  for(int i = 0 ; i < code.getNbParityBits(); i++ ) {
+    	  for(int i = 0 ; i < code.getNbParityBitsNeeded(); i++ ) {
     		  
     		  int smallStep = (int) Math.pow(2,i);
     		  int bigStep = smallStep *2;
@@ -59,6 +73,7 @@ public class Hamming {
     				    if(k > message.length -1) {
     				    	break;
     				    }else {
+    				    	
     				    	message[smallStep] ^= message[checkPos];
     				    }
     				    System.out.print(checkPos+" ");
@@ -77,26 +92,83 @@ public class Hamming {
     	  }
     	 return message;
      }
+     
+     //convert String to array
+     private  int[] StringToArray() {
+    	 array = new int[code.getnbMsg()+1];
+    	 for(int i = 0 ; i < code.getnbMsg(); i++ ) {
+		    	array[code.getnbMsg() -i]=Integer.parseInt(Character.toString(code.getMsg().charAt(i)));
+
+    	 }
+    	 return array;
+     }
+     public void verifier() {
+    	 StringToArray();
+    		StringBuilder c = new StringBuilder();
+
+    	 for(int i = 0 ; i < code.getNbBitsParity(); i++ ) {
+   		  
+   		  int smallStep = (int) Math.pow(2,i);
+   		  int bigStep = smallStep *2;
+   		  int start = smallStep;
+   		  int checkPos = start;
+   		  int a =0;
+ 			System.out.println("Calculating Parity bit for Position : "+smallStep);
+ 			System.out.print("Bits to be checked : ");
+   		  while(true) {
+   			  
+   			  for(int k = start;  k<= start + smallStep -1 ; k++) {
+   				    checkPos= k;
+   					
+
+   				    if(k > array.length -1) {
+   				    	break;
+   				    }else {
+   				    	a ^= array[checkPos];
+   				    	
+   				    }
+   				    System.out.print(checkPos+" ");
+   				    
+   			        }
+   			     
+   			
+   				    if(checkPos >array.length-1 ) {
+   				    	break;
+   				    }else {
+   				    	
+   				    	start += bigStep;
+   				    }
+   				     
+   			  
+   		  }
+   		 if(a !=array[smallStep]) {
+		    	 //System.out.println("error code hamming in position");
+		    	erreur=true;
+		       }
+			 System.out.print("le a :"+ a);
+
+   		 c.insert(i, a);
+   		  System.out.println();	
+   	  }
+   		
+
+    	 if(erreur==true) {
+    			int decimal = Integer.parseInt(c.toString(), 2);
+    			System.out.println("eereur a la position :" + decimal);
+    		  }
+    	 
+     }
      public void showMsg() {
     	
-      for(int i = tab.length -1  ; i >0 ; i--) {
-    	  System.out.print(tab[i]);
+      for(int i = array.length -1  ; i >0 ; i--) {
+    	  System.out.print(array[i] + " ");
       }
      }
      
 
  	public static void main(String[] args) throws BadStringOperationException {
- /*	int[] tab = addMessage("10110111010");
- 	for(int i=tab.length-1 ; i>0 ;i--) {
- 		System.out.print(tab[i]);
- 	}
-       
-     addParityBits(tab);   
-     
-     for(int i=tab.length-1 ; i>0 ;i--) {
-  		System.out.print(tab[i]);
-  	}*/
- 		Hamming tab = new Hamming("10110111010");
+ 
+ 		Hamming tab = new Hamming("010");
  		tab.showMsg();
  	}
  		
