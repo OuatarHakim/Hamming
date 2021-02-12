@@ -2,15 +2,19 @@ import javax.management.BadStringOperationException;
 
 public class Hamming {
      private static HammingWord code ;
-     
-     
-     public static int[] addMessage(String msg) throws BadStringOperationException {
+     private static int[] tab;
+     public Hamming(String msg) throws BadStringOperationException {
     	 code = new HammingWord(msg);
+    	 addParityBits(addMessage());
+    	 
+     }
+     public static int[] addMessage()  {
+    	
     	 int boxParity;
     	 int j=code.getnbMsg()-1;
     	 int temp=0;
     	 //un tableau pour placer les bits de msg;
-    	 int[] tab = new int[code.getnbMsg()+ code.getNbParityBits() +1];//on commence par 1 vue n=2^i  i commence par 1
+    	tab = new int[code.getnbMsg()+ code.getNbParityBits() +1];//on commence par 1 vue n=2^i  i commence par 1
     	 
     	 for(int i =1; i <=tab.length;i++) {
  			
@@ -20,7 +24,7 @@ public class Hamming {
  			   //check if we are in boxParity
  			    if(i%boxParity != 0) {
  			     	
- 			    	tab[i]=Integer.parseInt(Character.toString(msg.charAt(j)));
+ 			    	tab[i]=Integer.parseInt(Character.toString(code.getMsg().charAt(j)));
  	                j--;
  	                
  			   }else{
@@ -73,10 +77,16 @@ public class Hamming {
     	  }
     	 return message;
      }
+     public void showMsg() {
+    	
+      for(int i = tab.length -1  ; i >0 ; i--) {
+    	  System.out.print(tab[i]);
+      }
+     }
      
 
  	public static void main(String[] args) throws BadStringOperationException {
- 	int[] tab = addMessage("10110111010");
+ /*	int[] tab = addMessage("10110111010");
  	for(int i=tab.length-1 ; i>0 ;i--) {
  		System.out.print(tab[i]);
  	}
@@ -85,7 +95,10 @@ public class Hamming {
      
      for(int i=tab.length-1 ; i>0 ;i--) {
   		System.out.print(tab[i]);
-  	}
+  	}*/
+ 		Hamming tab = new Hamming("10110111010");
+ 		tab.showMsg();
  	}
+ 		
 
 }

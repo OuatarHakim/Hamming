@@ -39,7 +39,10 @@ public class HammingWord {
         }
         
        
-        
+        //get the message
+        public String getMsg() {
+        	return msg;
+        }
         //check if its a hamming code 
         private boolean  getIsHamming() {
         	
@@ -50,4 +53,6 @@ public class HammingWord {
         	}
         }
         
+        
 }
+
