@@ -42,7 +42,7 @@ public class HammingWord {
        	while(true)
    		{
        		
-   			if(getnbMsg()<= Math.pow(2,nbParityBits)-1)
+   			if(getnbMsg()<= Math.pow(2,nbParityBits)-1 || getnbMsg() <=3)
    			{
    				break;
    			}

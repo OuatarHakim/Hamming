@@ -166,11 +166,7 @@ public class Hamming {
      }
      
 
- 	public static void main(String[] args) throws BadStringOperationException {
- 
- 		Hamming tab = new Hamming("010");
- 		tab.showMsg();
- 	}
+ 	
  		
 
 }
