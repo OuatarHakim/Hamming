@@ -1,17 +1,20 @@
-import javax.management.BadStringOperationException;
+/**
+ * @author hakim ouatar
+ * 
+ */
+package hamming;
 
 public class HammingWord {
 	
         private String msg;//message to be transmit
         private int nbMsg; // numbre of bits in the message
         private int nbParityBits ; // number of number of parity bits needed
-        private boolean isHamming ; //check if it's hamming code ;
+		private boolean isHamming ; //check if it's hamming code ;
         private boolean acceptMsg ; //check if we can transmet the message  exemple 4 11 26
         
-        public HammingWord(String message) throws BadStringOperationException{
+        public HammingWord(String message) throws Exception{
         	//check if its a binary message and its not null
-        	if(!message.matches("[01]+") || message.length()<1)throw new BadStringOperationException("the message is not binary");
-
+        	if(!message.matches("[01]+") || message.length()<1)throw new Exception("the message is not binary");
         	msg = message;
         	nbMsg= message.length();
         	nbParityBits=0;
@@ -36,6 +39,8 @@ public class HammingWord {
        
 			return nbParityBits;
         }
+       
+       //get number of parity bits in hamming word
        public int getNbBitsParity() {
 
            nbParityBits=0;
@@ -73,6 +78,7 @@ public class HammingWord {
         	}
         }
         
+        //check if the number of bits to be transmit if accepted
         public boolean acceptMsg() {
         	if(msg.length() !=( Math.pow(2, getNbParityBitsNeeded())-1)-getNbParityBitsNeeded()) {
         		return acceptMsg = false;

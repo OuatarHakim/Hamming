@@ -1,28 +1,27 @@
+/**
+ * @author hakim ouatar
+ */
 
-import java.util.List;
-import java.util.ArrayList;
-
-import javax.management.BadStringOperationException;
-
+package hamming;
 public class Hamming {
-     private static HammingWord code ;
-     private static int[] array;
-     private boolean erreur=false;
-     public Hamming(String msg) throws BadStringOperationException {
+	
+     private  HammingWord code ; //binary code (to be transmitted or to check)
+     private  int[] array;       // 
+     private boolean erreur=false;  // check if 
+     private int choice;
+     public Hamming(String msg, int choix) throws Exception {
     	
     	 code = new HammingWord(msg);
-    	// addParityBits(addMessage());
-    	 if(code.acceptMsg()) {
-    		 addParityBits(addMessage());
-    	 }else if(code.isHamming()) {
-    		 verifier();
-    	 }else {
-    	 System.out.println("the number of bits in the message is incorrect or its not a hamming code");
-    	 System.exit(1);
-     }
+    	 choice=choix;
+    
     	 
      }
-     public static int[] addMessage()  {
+     
+     /**
+      * function to be used when we transmit un message 
+      * @return array of bits in the good position 
+      */
+     public  int[] addMessage()  {
     	
     	 int boxParity;
     	 int j=code.getnbMsg()-1;
@@ -51,8 +50,13 @@ public class Hamming {
     	 
     	 return array;
      }
-     //OU exclusif //Retourne 1 si l'un des deux bits de même poids est à 1 (mais pas les deux)
-     public static  int[] addParityBits(int[] message) {
+   
+     /**
+      * function add parity bits in the message to be transmitted
+      * @param message
+      * @return array of bits (hamming message)
+      */
+     public   int[] addParityBits(int[] message) {
     	 
     	  for(int i = 0 ; i < code.getNbParityBitsNeeded(); i++ ) {
     		  
@@ -73,7 +77,7 @@ public class Hamming {
     				    if(k > message.length -1) {
     				    	break;
     				    }else {
-    				    	
+    				    	 //OU exclusif //Retourne 1 si l'un des deux bits de même poids est à 1 (mais pas les deux)
     				    	message[smallStep] ^= message[checkPos];
     				    }
     				    System.out.print(checkPos+" ");
@@ -93,7 +97,10 @@ public class Hamming {
     	 return message;
      }
      
-     //convert String to array
+     /**
+      * function convert string to array 
+      * @return array 
+      */
      private  int[] StringToArray() {
     	 array = new int[code.getnbMsg()+1];
     	 for(int i = 0 ; i < code.getnbMsg(); i++ ) {
@@ -102,18 +109,23 @@ public class Hamming {
     	 }
     	 return array;
      }
-     public void verifier() {
-    	 StringToArray();
+     
+     /**
+      * function check if the code is a hamming code
+      */
+     public void checkHammingCode() {
+    	 
+    	    StringToArray();
     		StringBuilder c = new StringBuilder();
 
     	 for(int i = 0 ; i < code.getNbBitsParity(); i++ ) {
    		  
-   		  int smallStep = (int) Math.pow(2,i);
-   		  int bigStep = smallStep *2;
-   		  int start = smallStep;
-   		  int checkPos = start;
-   		  int a =0;
- 			System.out.println("Calculating Parity bit for Position : "+smallStep);
+   		     int smallStep = (int) Math.pow(2,i);
+   		     int bigStep = smallStep *2;
+   		     int start = smallStep;
+   		     int checkPos = start;
+   		     int a =0;
+ 			System.out.println("check parity bit for position : "+smallStep);
  			System.out.print("Bits to be checked : ");
    		  while(true) {
    			  
@@ -124,6 +136,7 @@ public class Hamming {
    				    if(k > array.length -1) {
    				    	break;
    				    }else {
+   				     //OU exclusif //Retourne 1 si l'un des deux bits de même poids est à 1 (mais pas les deux)
    				    	a ^= array[checkPos];
    				    	
    				    }
@@ -141,23 +154,27 @@ public class Hamming {
    				     
    			  
    		  }
+   		  //check if a not equals to the parity bit
    		 if(a !=array[smallStep]) {
 		    	 //System.out.println("error code hamming in position");
 		    	erreur=true;
 		       }
-			 System.out.print("le a :"+ a);
+	      System.out.print("C"+i+ ": "+a);
 
-   		 c.insert(i, a);
+   		  c.insert(i, a);
    		  System.out.println();	
    	  }
    		
-
+         // if there is a error, calculating a position of error on decimal 
     	 if(erreur==true) {
     			int decimal = Integer.parseInt(c.toString(), 2);
-    			System.out.println("eereur a la position :" + decimal);
+    			System.out.println("Erreur a la position :" + decimal);
     		  }
     	 
      }
+     /**
+      * show hamming code
+      */
      public void showMsg() {
     	
       for(int i = array.length -1  ; i >0 ; i--) {
@@ -165,8 +182,37 @@ public class Hamming {
       }
      }
      
-
+   
+    public  int  getChoice() {
+    	return choice;
+    }
  	
- 		
+    /**
+     * check your choice 
+     */
+ 	public void choiceWanted()	{
+ 		if(choice == 1 ) {
+ 			 if(code.acceptMsg()) {
+ 	    		 addParityBits(addMessage());
+ 	    	 }else{
+ 	    		System.out.println("the number of bits in the message is incorrect !");
+ 	      	    System.exit(1);
+
+ 	    	 }
+ 		}else if(choice == 0) {
+ 			if(code.isHamming()) {
+ 				 checkHammingCode();
+	    	 }else{
+	    		System.out.println("its not a hamming code !");
+	       	    System.exit(1);
+
+	    	 }
+ 		}else {
+    		System.out.println("votre choix est invalide !");
+       	    System.exit(1);
+
+
+ 		}
+ 	}
 
 }
