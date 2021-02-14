@@ -9,12 +9,13 @@ public class Hamming {
      private  int[] array;       // 
      private boolean erreur=false;  // check if 
      private int choice;
+     
      public Hamming(String msg, int choix) throws Exception {
     	
     	 code = new HammingWord(msg);
     	 choice=choix;
-    
-    	 
+         array=null;
+        
      }
      
      /**
@@ -44,8 +45,6 @@ public class Hamming {
  				
  				    temp++;
  			   }
- 			
- 			
  		 }
     	 
     	 return array;
@@ -64,15 +63,12 @@ public class Hamming {
     		  int bigStep = smallStep *2;
     		  int start = smallStep;
     		  int checkPos = start;
-    		  
-    			
-  			System.out.println("Calculating Parity bit for Position : "+smallStep);
-  			System.out.print("Bits to be checked : ");
+  			  System.out.println("Calculating Parity bit for Position : "+smallStep);
+  			  System.out.print("Bits to be checked : ");
     		  while(true) {
     			  
     			  for(int k = start;  k<= start + smallStep -1 ; k++) {
     				    checkPos= k;
-    					
 
     				    if(k > message.length -1) {
     				    	break;
@@ -81,17 +77,14 @@ public class Hamming {
     				    	message[smallStep] ^= message[checkPos];
     				    }
     				    System.out.print(checkPos+" ");
-    			        }
-    				    if(checkPos >message.length-1 ) {
-    				    	break;
-    				    }else {
-    				    	
-    				    	start += bigStep;
-    				    }
-    				     
+    			  }
     			  
-    			  
-    		  }
+    		       if(checkPos >message.length-1 ) {
+    				    break;
+    				 }else {
+    				     start += bigStep;
+    				 }   
+    		    }
     		  System.out.println();	
     	  }
     	 return message;
@@ -114,64 +107,63 @@ public class Hamming {
       * function check if the code is a hamming code
       */
      public void checkHammingCode() {
-    	 
+    	    
+    	    
     	    StringToArray();
     		StringBuilder c = new StringBuilder();
-
+    		
     	 for(int i = 0 ; i < code.getNbBitsParity(); i++ ) {
    		  
-   		     int smallStep = (int) Math.pow(2,i);
-   		     int bigStep = smallStep *2;
-   		     int start = smallStep;
-   		     int checkPos = start;
-   		     int a =0;
- 			System.out.println("check parity bit for position : "+smallStep);
- 			System.out.print("Bits to be checked : ");
-   		  while(true) {
-   			  
-   			  for(int k = start;  k<= start + smallStep -1 ; k++) {
-   				    checkPos= k;
-   					
-
-   				    if(k > array.length -1) {
-   				    	break;
-   				    }else {
-   				     //OU exclusif //Retourne 1 si l'un des deux bits de même poids est à 1 (mais pas les deux)
-   				    	a ^= array[checkPos];
-   				    	
-   				    }
-   				    System.out.print(checkPos+" ");
-   				    
-   			        }
+	   		     int smallStep = (int) Math.pow(2,i);
+	   		     int bigStep = smallStep *2;
+	   		     int start = smallStep;
+	   		     int checkPos = start;
+	   		     int a =0;
+	 		     System.out.println("check parity bit for position : "+smallStep);
+	 			 System.out.print("Bits to be checked : ");
+	   		 
+ 			while(true) {
+ 				
+   			    for(int k = start;  k<= start + smallStep -1 ; k++) {
+   			    	
+   				      checkPos= k;
+   					  if(k > array.length -1) {
+   				    	   break;
+   				      }else {
+   				       //OU exclusif //Retourne 1 si l'un des deux bits de même poids est à 1 (mais pas les deux)
+   				    	   a ^= array[checkPos];
+   				      }
+   				       System.out.print(checkPos+" ");
+   				  }
    			     
    			
-   				    if(checkPos >array.length-1 ) {
-   				    	break;
-   				    }else {
-   				    	
-   				    	start += bigStep;
-   				    }
+   				 if(checkPos >array.length-1 ) {
+   				      break;
+   				 }else {
+   				      start += bigStep;
+   				 }
    				     
-   			  
-   		  }
-   		  //check if a not equals to the parity bit
-   		 if(a !=array[smallStep]) {
-		    	 //System.out.println("error code hamming in position");
-		    	erreur=true;
-		       }
-	      System.out.print("C"+i+ ": "+a);
-
-   		  c.insert(i, a);
+   			}
+   		       //check if a not equals to the parity bit
+   		    if(a !=0) {
+   			 erreur=true;
+   		     }
+	      System.out.print("    C"+i+ ": "+a);
+          c.insert(i, a);
    		  System.out.println();	
-   	  }
+   	      }
    		
          // if there is a error, calculating a position of error on decimal 
     	 if(erreur==true) {
-    			int decimal = Integer.parseInt(c.toString(), 2);
-    			System.out.println("Erreur a la position :" + decimal);
-    		  }
-    	 
+    			 int position = Integer.parseInt(c.toString(), 2);
+    			 System.out.println("Erreur a la position :" + position);
+    	     
+         }else {
+      			System.out.println("le code n'a pas d'erreur");
+      		    }
      }
+     
+     
      /**
       * show hamming code
       */
@@ -183,35 +175,27 @@ public class Hamming {
      }
      
    
-    public  int  getChoice() {
-    	return choice;
-    }
- 	
+    
     /**
      * check your choice 
      */
- 	public void choiceWanted()	{
+ 	public void choiceWanted()	throws Exception{
  		if(choice == 1 ) {
- 			 if(code.acceptMsg()) {
+ 			 if(!code.acceptMsg()) throw new Exception("the number of bits in the message is incorrect !");
+ 				System.out.println();
+ 	    		System.out.println("-------------------Génération de mot de hamming----------------------- ");
+ 	    		System.out.println();
  	    		 addParityBits(addMessage());
- 	    	 }else{
- 	    		System.out.println("the number of bits in the message is incorrect !");
- 	      	    System.exit(1);
-
- 	    	 }
+ 	    	 
  		}else if(choice == 0) {
- 			if(code.isHamming()) {
+ 			if(!code.isHamming()) throw new Exception("its not a hamming code !");
+ 				System.out.println();
+ 	    		System.out.println("-------------------Vérification de mot de hamming----------------------- ");
+ 	    		System.out.println();
  				 checkHammingCode();
-	    	 }else{
-	    		System.out.println("its not a hamming code !");
-	       	    System.exit(1);
-
-	    	 }
+	    	
  		}else {
-    		System.out.println("votre choix est invalide !");
-       	    System.exit(1);
-
-
+ 			throw new Exception("votre choix est invalide !");
  		}
  	}
 

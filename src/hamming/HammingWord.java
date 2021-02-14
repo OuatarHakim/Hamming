@@ -78,7 +78,7 @@ public class HammingWord {
         	}
         }
         
-        //check if the number of bits to be transmit if accepted
+        //check if the number of bits to be transmmit if accepted
         public boolean acceptMsg() {
         	if(msg.length() !=( Math.pow(2, getNbParityBitsNeeded())-1)-getNbParityBitsNeeded()) {
         		return acceptMsg = false;
